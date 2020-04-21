@@ -1,5 +1,6 @@
-module ChatApp {
+module ChatUI {
     requires javafx.fxml;
     requires javafx.controls;
-    opens app;
+
+    opens Application;
 }
