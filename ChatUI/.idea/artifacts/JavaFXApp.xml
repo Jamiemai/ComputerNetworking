@@ -10,6 +10,7 @@
       <element id="archive" name="JavaFXApp.jar">
         <element id="module-output" name="ChatUI" />
       </element>
+      <element id="library" level="application" name="jfoenix-9.0.8" />
     </root>
   </artifact>
 </component>
