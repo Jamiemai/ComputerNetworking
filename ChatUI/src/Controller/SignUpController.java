@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXTextField;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
@@ -18,7 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class LoginController implements Initializable {
+public class SignUpController implements Initializable {
     @FXML
     private JFXTextField username;
 
@@ -29,16 +28,13 @@ public class LoginController implements Initializable {
     private ImageView progress;
 
     @FXML
-    private JFXButton login;
-
-    @FXML
     private JFXButton signup;
 
     @FXML
-    private JFXCheckBox remember;
+    private JFXButton login;
 
     @FXML
-    private JFXButton forgotpassword;
+    private JFXTextField repassword;
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
@@ -46,25 +42,25 @@ public class LoginController implements Initializable {
     }
 
     @FXML
-    public void loginAction(ActionEvent e) {
+    public void signUpAction(ActionEvent e) {
         progress.setVisible(true);
         PauseTransition pt = new PauseTransition();
         pt.setDuration(Duration.seconds(3));
         pt.setOnFinished(ev -> {
-            System.out.print("Login Successfully");
+            System.out.print("Sign Up Successfully");
         });
         pt.play();
     }
 
     @FXML
-    public void signUp(ActionEvent e1) throws IOException {
-        login.getScene().getWindow().hide();
+    public void login(ActionEvent e1) throws IOException {
+        signup.getScene().getWindow().hide();
 
-        Stage signup = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("/FXML/SignUpUI.fxml"));
+        Stage login = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("/FXML/LoginUI.fxml"));
         Scene scene = new Scene(root);
-        signup.setScene(scene);
-        signup.show();
-        signup.setResizable(false);
+        login.setScene(scene);
+        login.show();
+        login.setResizable(false);
     }
 }
