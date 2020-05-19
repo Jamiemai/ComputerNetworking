@@ -44,6 +44,7 @@ public class ChatUIController implements Initializable {
 
         // obtaining input and out streams
         try {
+            assert s != null;
             dis = new DataInputStream(s.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
