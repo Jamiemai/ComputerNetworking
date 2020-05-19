@@ -1,14 +1,11 @@
 package Controller;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -58,7 +55,7 @@ public class LoginController implements Initializable {
 
         //Retrive Data from Database
         connection = handler.getConnection();
-        String q1 = "SELECT * from chatDB where username=? and password=?";
+        String q1 = "SELECT * from chatDB where username= ? and password= ?";
         try {
             pst = connection.prepareStatement(q1);
             pst.setString(1, username.getText());
@@ -70,21 +67,12 @@ public class LoginController implements Initializable {
             while (rs.next()) {
                 count = count + 1;
             }
+
             if (count == 1) {
-                //Update database
-                InetAddress inetAddress = InetAddress.getLocalHost();
-                String insert = "update chatDB set ip = ? where username = ?";
-                pst = connection.prepareStatement(insert);
-
-                pst.setString(1, Arrays.toString(inetAddress.getAddress()));
-                pst.setString(2, username.getText());
-                pst.executeUpdate();
-
                 PauseTransition pt = new PauseTransition();
                 pt.setDuration(Duration.seconds(1));
                 pt.setOnFinished(ev -> {
                     try {
-
                         chatUIDisplay();
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
@@ -95,7 +83,7 @@ public class LoginController implements Initializable {
                 alert.setVisible(true);
                 progress.setVisible(false);
             }
-        } catch (SQLException | UnknownHostException e1) {
+        } catch (SQLException e1) {
             e1.printStackTrace();
         }
         finally{
