@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 
-// Server class
 public class Server
 {
 
@@ -34,15 +33,12 @@ public class Server
             DataInputStream dis = new DataInputStream(s.getInputStream());
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-            System.out.println("Creating a new handler for this client...");
-
             // Create a new handler object for handling this request.
             ClientHandler mtch = new ClientHandler(s,"client " + i, dis, dos);
 
             // Create a new Thread with this object.
             Thread t = new Thread(mtch);
 
-            System.out.println("Adding this client to active client list");
 
             // add this client to active clients list
             ar.add(mtch);
@@ -67,7 +63,7 @@ class ClientHandler implements Runnable
     final DataInputStream dis;
     final DataOutputStream dos;
     Socket s;
-    boolean isloggedin;
+    boolean online;
 
     // constructor
     public ClientHandler(Socket s, String name,
@@ -76,7 +72,7 @@ class ClientHandler implements Runnable
         this.dos = dos;
         this.name = name;
         this.s = s;
-        this.isloggedin=true;
+        this.online=true;
     }
 
     @Override
@@ -90,12 +86,6 @@ class ClientHandler implements Runnable
                 // receive the string
                 received = dis.readUTF();
 
-                if(received.equals("logout")){
-                    this.isloggedin=false;
-                    this.s.close();
-                    break;
-                }
-
                 // break the string into message and recipient part
                 StringTokenizer st = new StringTokenizer(received, "#");
                 String MsgToSend = st.nextToken();
@@ -107,26 +97,20 @@ class ClientHandler implements Runnable
                 {
                     // if the recipient is found, write on its
                     // output stream
-                    if (mc.name.equals(recipient) && mc.isloggedin)
+                    if (mc.name.equals(recipient) && mc.online)
                     {
                         mc.dos.writeUTF(this.name+" : "+MsgToSend);
                         break;
                     }
                 }
             } catch (IOException e) {
-
-                e.printStackTrace();
+                try {
+                    this.s.close();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
 
-        }
-        try
-        {
-            // closing resources
-            this.dis.close();
-            this.dos.close();
-
-        }catch(IOException e){
-            e.printStackTrace();
         }
     }
 } 

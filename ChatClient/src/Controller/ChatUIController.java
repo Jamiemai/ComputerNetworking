@@ -12,9 +12,9 @@ import java.io.*;
 import java.net.*;
 import java.util.ResourceBundle;
 
-// Client class
 public class ChatUIController implements Initializable {
     final static int ServerPort = 1234;
+
     @FXML
     private JFXTextField message;
 
@@ -23,6 +23,7 @@ public class ChatUIController implements Initializable {
 
     private DataInputStream dis;
     private DataOutputStream dos;
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1)  {
         // getting localhost ip
@@ -47,27 +48,24 @@ public class ChatUIController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         try {
             dos = new DataOutputStream(s.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         // readMessage thread
-        Thread readMessage = new Thread(new Runnable()
-        {
-            @Override
-            public void run() {
-
-                while (true) {
+        Socket finalS = s;
+        Thread readMessage = new Thread(() -> {
+            while (true) {
+                try {
+                    // read the message sent to this client
+                    String msg = dis.readUTF();
+                    chatBox.getItems().add(msg);
+                } catch (IOException e) {
                     try {
-                        // read the message sent to this client
-                        String msg = dis.readUTF();
-                        chatBox.getItems().add(msg);
-                    } catch (IOException e) {
-
-                        e.printStackTrace();
+                        finalS.close();
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
                     }
                 }
             }
@@ -88,7 +86,6 @@ public class ChatUIController implements Initializable {
 
     private void sendMessage() throws IOException {
         try {
-            // write on the output stream
             dos.writeUTF(message.getText());
         } catch (IOException e) {
             e.printStackTrace();

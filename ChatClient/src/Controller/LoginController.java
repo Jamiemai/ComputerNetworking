@@ -1,11 +1,14 @@
 package Controller;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -22,6 +25,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import DBConnection.DBHandler;
 public class LoginController implements Initializable {
+
     @FXML
     private JFXTextField username;
 
@@ -67,10 +71,20 @@ public class LoginController implements Initializable {
                 count = count + 1;
             }
             if (count == 1) {
+                //Update database
+                InetAddress inetAddress = InetAddress.getLocalHost();
+                String insert = "update chatDB set ip = ? where username = ?";
+                pst = connection.prepareStatement(insert);
+
+                pst.setString(1, Arrays.toString(inetAddress.getAddress()));
+                pst.setString(2, username.getText());
+                pst.executeUpdate();
+
                 PauseTransition pt = new PauseTransition();
                 pt.setDuration(Duration.seconds(1));
                 pt.setOnFinished(ev -> {
                     try {
+
                         chatUIDisplay();
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
@@ -81,7 +95,7 @@ public class LoginController implements Initializable {
                 alert.setVisible(true);
                 progress.setVisible(false);
             }
-        } catch (SQLException e1) {
+        } catch (SQLException | UnknownHostException e1) {
             e1.printStackTrace();
         }
         finally{
