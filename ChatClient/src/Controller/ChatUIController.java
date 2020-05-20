@@ -24,6 +24,7 @@ public class ChatUIController implements Initializable {
     private DataInputStream dis;
     private DataOutputStream dos;
 
+    public String username;
     @Override
     public void initialize(URL arg0, ResourceBundle arg1)  {
         // getting localhost ip
@@ -51,6 +52,7 @@ public class ChatUIController implements Initializable {
         }
         try {
             dos = new DataOutputStream(s.getOutputStream());
+            dos.writeUTF(username);
         } catch (IOException e) {
             e.printStackTrace();
         }

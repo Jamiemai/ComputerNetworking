@@ -72,20 +72,6 @@ public class LoginController implements Initializable {
             }
 
             if (count == 1) {
-                //Update database
-                String privateIP = "";
-                URL urlName = new URL("http://bot.whatismyipaddress.com");
-                BufferedReader sc = new BufferedReader(new InputStreamReader(urlName.openStream()));
-
-                // reads private IP address
-                privateIP = sc.readLine().trim();
-
-                q1 = "update chatDB set ip = ? where username = ?";
-                pst = connection.prepareStatement(q1);
-                pst.setString(1, privateIP);
-                pst.setString(2, username.getText());
-                pst.executeUpdate();
-
                 PauseTransition pt = new PauseTransition();
                 pt.setDuration(Duration.seconds(1));
                 pt.setOnFinished(ev -> {
@@ -100,10 +86,8 @@ public class LoginController implements Initializable {
                 alert.setVisible(true);
                 progress.setVisible(false);
             }
-        } catch (SQLException | MalformedURLException e1) {
+        } catch (SQLException e1) {
             e1.printStackTrace();
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
         } finally{
             try {
                 connection.close();
