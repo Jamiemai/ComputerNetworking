@@ -34,7 +34,7 @@ public class Server
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
             // Create a new handler object for handling this request.
-            ClientHandler mtch = new ClientHandler(s,"client ", dis, dos);
+            ClientHandler mtch = new ClientHandler(s, "", dis, dos);
 
             // Create a new Thread with this object.
             Thread t = new Thread(mtch);
