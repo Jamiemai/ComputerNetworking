@@ -6,28 +6,42 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 
 import java.io.*;
 import java.net.*;
+
 import java.util.ResourceBundle;
 
-public class ChatUIController implements Initializable {
+public
+class ChatUIController implements Initializable {
+
     final static int ServerPort = 1234;
+
+    private String selectedUser = null;
 
     @FXML
     private JFXTextField message;
 
     @FXML
+    private JFXTextField userName;
+
+    @FXML
     private JFXListView<String> chatBox;
+
+    @FXML
+    private JFXListView<String> onlineList;
 
     private DataInputStream dis;
     private DataOutputStream dos;
 
-    public String username;
     @Override
-    public void initialize(URL arg0, ResourceBundle arg1)  {
-        // getting localhost ip
+    public
+    void initialize(URL arg0, ResourceBundle arg1) {
+
+        onlineList.setOnMouseClicked(event -> { // có thê bằng null
+            selectedUser = onlineList.getSelectionModel().getSelectedItem();
+        });
+
         InetAddress ip = null;
         try {
             ip = InetAddress.getByName("localhost");
@@ -35,7 +49,6 @@ public class ChatUIController implements Initializable {
             e.printStackTrace();
         }
 
-        // establish the connection
         Socket s = null;
         try {
             s = new Socket(ip, ServerPort);
@@ -43,27 +56,40 @@ public class ChatUIController implements Initializable {
             e.printStackTrace();
         }
 
-        // obtaining input and out streams
         try {
             assert s != null;
             dis = new DataInputStream(s.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         try {
             dos = new DataOutputStream(s.getOutputStream());
-            dos.writeUTF(username);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // readMessage thread
         Socket finalS = s;
         Thread readMessage = new Thread(() -> {
             while (true) {
                 try {
-                    // read the message sent to this client
                     String msg = dis.readUTF();
-                    chatBox.getItems().add(msg);
+
+                    // break the string into message and recipient part
+                    String[] msgSplit     = msg.split("#", 2);
+                    switch (msgSplit[0]) {
+                        case "NEW_USER":
+                            onlineList.getItems().add(msgSplit[1]);
+                            break;
+                        case "ALL_USER":
+                            String[] userString = msgSplit[1].split("#");
+                            for (String user : userString) {
+                                onlineList.getItems().add(user);
+                            }
+                            break;
+                        default:
+                            chatBox.getItems().add(msgSplit[0] + ": " + msgSplit[1]);
+                            break;
+                    }
                 } catch (IOException e) {
                     try {
                         finalS.close();
@@ -77,21 +103,31 @@ public class ChatUIController implements Initializable {
     }
 
     @FXML
-    void buttonSend(MouseEvent event) throws IOException {
+    void buttonSend() {
         sendMessage();
     }
 
     @FXML
-    public void textBoxSend(KeyEvent e) throws IOException {
+    public
+    void textBoxSend(KeyEvent e) {
         if (e.getCode() == KeyCode.ENTER)
             sendMessage();
     }
 
-    private void sendMessage() throws IOException {
+    private
+    void sendMessage() {
         try {
-            dos.writeUTF(message.getText());
+            String msg = selectedUser + "#" + message.getText();
+            dos.writeUTF(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public
+    void setUsername(String username) throws IOException {
+        userName.setText(username);
+        dos.writeUTF(userName.getText());
+    }
+
 }

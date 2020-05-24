@@ -7,14 +7,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import java.io.*;
-import java.net.Socket;
 
 public class Client extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/FXML/LoginUI.fxml"));
-            Scene scene = new Scene(root,600,420);
+            Scene scene = new Scene(root);
             primaryStage.setScene(scene);
             primaryStage.show();
             primaryStage.setResizable(false);
