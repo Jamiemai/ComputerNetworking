@@ -1,15 +1,15 @@
 package Controller;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -18,11 +18,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import DBConnection.DBHandler;
 
 public class SignUpController implements Initializable {
+
+    final static int ServerPort = 1234;
+
     @FXML
     private JFXTextField username;
 
@@ -41,48 +41,40 @@ public class SignUpController implements Initializable {
     @FXML
     private JFXTextField alert;
 
-    private Connection connection;
-    private DBHandler handler;
-    private PreparedStatement pst;
-
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         alert.setVisible(false);
         progress.setVisible(false);
-        handler = new DBHandler();
     }
 
     @FXML
-    public void signUpAction(ActionEvent e) throws SQLException, ClassNotFoundException {
-        progress.setVisible(true);
+    public void signUpAction() throws IOException {
         if (password.getText().equals(repassword.getText())) {
-            // Saving Data
-            String insert = "INSERT INTO chatDB(username,password)" + "VALUES (?,?)";
-            connection = handler.getConnection();
-            pst = connection.prepareStatement(insert);
+            progress.setVisible(true);
+            InetAddress ip = null;
+            ip = InetAddress.getByName("localhost");
 
-            pst.setString(1, username.getText());
-            pst.setString(2, password.getText());
+            Socket s = null;
+            s = new Socket(ip, ServerPort);
+            DataInputStream  dis = new DataInputStream(s.getInputStream());
+            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-            pst.executeUpdate();
-            //
-            PauseTransition pt = new PauseTransition();
-            pt.setDuration(Duration.seconds(1));
-            pt.setOnFinished(ev -> {
-                try {
-                    displayLogin();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
-            });
-            pt.play();
+            dos.writeUTF("LOGIN#" + username.getText() + "#" + password.getText());
+            if (dis.readUTF().equals("CORRECT")) {
+                displayLogin();
+            } else {
+                alert.setText("Username already exists");
+                alert.setVisible(true);
+                progress.setVisible(false);
+            }
+            s.close();
         }
         else {
+            alert.setText("Password does not match");
             alert.setVisible(true);
             progress.setVisible(false);
         }
     }
-
     @FXML
     public void loginButtonClicked(ActionEvent e1) throws IOException {
         displayLogin();
@@ -98,6 +90,4 @@ public class SignUpController implements Initializable {
         login.show();
         login.setResizable(false);
     }
-
-
 }

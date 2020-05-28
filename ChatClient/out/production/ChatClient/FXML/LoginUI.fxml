@@ -47,10 +47,10 @@
                 <Font size="16.0" />
             </font>
         </JFXButton>
-      <JFXTextField fx:id="alert" alignment="CENTER" editable="false" focusColor="WHITE" layoutX="190.0" layoutY="292.0" prefHeight="28.0" prefWidth="221.0" style="-fx-text-fill: #ffffff;" text="Wrong Username Or Password" unFocusColor="WHITE">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </JFXTextField>
+        <JFXTextField fx:id="alert" alignment="CENTER" editable="false" focusColor="WHITE" layoutX="190.0" layoutY="292.0" prefHeight="28.0" prefWidth="221.0" style="-fx-text-fill: #ffffff;" text="Wrong Username Or Password" unFocusColor="WHITE">
+            <font>
+                <Font size="14.0" />
+            </font>
+        </JFXTextField>
     </children>
 </AnchorPane>

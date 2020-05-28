@@ -1,107 +1,58 @@
 package Server;
 
-import DBConnection.DBHandler;
-
 import java.io.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 import java.net.*;
+public
+class Server {
 
-public class Server
-{
+    static Vector<ClientHandler> clientHandlerVector = new Vector<>();
 
-    // Vector to store active clients
-    static Vector<ClientHandler> ar = new Vector<>();
-
-    public static void main(String[] args) throws IOException {
-        // server is listening on port 1234
+    public static
+    void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
         ServerSocket ss = new ServerSocket(1234);
 
         Socket s;
 
-        Connection connection;
-        DBHandler handler = null;
-        PreparedStatement pst;
-
-        while (true)
-        {
+        while (true) {
             // Accept the incoming request
             s = ss.accept();
 
             // obtain input and output streams
-            DataInputStream dis = new DataInputStream(s.getInputStream());
+            DataInputStream  dis = new DataInputStream(s.getInputStream());
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-            // Create a new handler object for handling this request.
-            ClientHandler mtch = new ClientHandler(s,"client ", dis, dos);
+            String received = dis.readUTF();
+            String[] msgSplit     = received.split("#");
+            switch (msgSplit[0]) {
+                case "LOGIN":
+                    dos.writeUTF(DBconnection.RetriveData(msgSplit[1], msgSplit[2]));
+                    break;
+                case "SIGNUP":
+                    dos.writeUTF(DBconnection.SavingData(msgSplit[1], msgSplit[2]));
+                    break;
+                default:
+                    // Create a new handler object for handling this request.
+                    ClientHandler client = new ClientHandler(s, dis.readUTF(), dis, dos);
 
-            // Create a new Thread with this object.
-            Thread t = new Thread(mtch);
+                    for (ClientHandler clientHandler : clientHandlerVector) {
+                        clientHandler.AddOnlineClient(client.name);
+                    }
 
-            // add this client to active clients list
-            ar.add(mtch);
+                    client.AddAllOnlineClient();
 
-            // start the thread.
-            t.start();
+                    // add new client to active clients list
+                    clientHandlerVector.add(client);
+
+                    // Create a new Thread with this object.
+                    Thread t = new Thread(client);
+
+                    // start the thread.
+                    t.start();
+                    break;
+            }
         }
     }
 }
 
-// ClientHandler class
-class ClientHandler implements Runnable
-{
-    private String name;
-    final DataInputStream dis;
-    final DataOutputStream dos;
-    Socket s;
-    boolean online;
-
-    // constructor
-    public ClientHandler(Socket s, String name,
-                         DataInputStream dis, DataOutputStream dos) {
-        this.dis = dis;
-        this.dos = dos;
-        this.name = name;
-        this.s = s;
-        this.online=true;
-    }
-
-    @Override
-    public void run() {
-        String received;
-        while (true)
-        {
-            try
-            {
-                // receive the string
-                received = dis.readUTF();
-
-                // break the string into message and recipient part
-                StringTokenizer st = new StringTokenizer(received, "#");
-                String MsgToSend = st.nextToken();
-                String recipient = st.nextToken();
-
-                // search for the recipient in the connected devices list.
-                // ar is the vector storing client of active users
-                for (ClientHandler mc : Server.ar)
-                {
-                    // if the recipient is found, write on its
-                    // output stream
-                    if (mc.name.equals(recipient) && mc.online)
-                    {
-                        mc.dos.writeUTF(this.name+" : "+MsgToSend);
-                        break;
-                    }
-                }
-            } catch (IOException e) {
-                try {
-                    this.s.close();
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
-            }
-
-        }
-    }
-} 

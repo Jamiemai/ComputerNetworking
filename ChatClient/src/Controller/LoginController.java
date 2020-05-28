@@ -1,20 +1,12 @@
 package Controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.*;
+import java.net.*;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
-import javafx.animation.PauseTransition;
-import javafx.event.ActionEvent;
+
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
@@ -22,10 +14,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-import DBConnection.DBHandler;
+
 public class LoginController implements Initializable {
 
+    final static int ServerPort = 1234;
+
+    public JFXButton signup;
     @FXML
     private JFXTextField username;
 
@@ -41,80 +35,38 @@ public class LoginController implements Initializable {
     @FXML
     private JFXTextField alert;
 
-    private Connection connection;
-    private DBHandler handler;
-    private PreparedStatement pst;
-
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         alert.setVisible(false);
         progress.setVisible(false);
-        handler = new DBHandler();
     }
 
     @FXML
-    public void loginAction(ActionEvent e) throws SQLException, ClassNotFoundException {
+    public void loginAction() throws IOException {
         progress.setVisible(true);
 
-        //Retrive Data from Database
-        connection = handler.getConnection();
-        String q1 = "SELECT * from chatDB where username= ? and password= ?";
+        InetAddress ip = null;
+        ip = InetAddress.getByName("localhost");
+
+        Socket s = null;
+        s = new Socket(ip, ServerPort);
+        DataInputStream dis = new DataInputStream(s.getInputStream());
+        DataOutputStream dos = new DataOutputStream(s.getOutputStream());
         try {
-            pst = connection.prepareStatement(q1);
-            pst.setString(1, username.getText());
-            pst.setString(2, password.getText());
-            ResultSet rs = pst.executeQuery();
-
-            int count = 0;
-
-            while (rs.next()) {
-                count = count + 1;
-            }
-
-            if (count == 1) {
-                //Update database
-                String privateIP = "";
-                URL urlName = new URL("http://bot.whatismyipaddress.com");
-                BufferedReader sc = new BufferedReader(new InputStreamReader(urlName.openStream()));
-
-                // reads private IP address
-                privateIP = sc.readLine().trim();
-
-                q1 = "update chatDB set ip = ? where username = ?";
-                pst = connection.prepareStatement(q1);
-                pst.setString(1, privateIP);
-                pst.setString(2, username.getText());
-                pst.executeUpdate();
-
-                PauseTransition pt = new PauseTransition();
-                pt.setDuration(Duration.seconds(1));
-                pt.setOnFinished(ev -> {
-                    try {
-                        chatUIDisplay();
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                    }
-                });
-                pt.play();
+            dos.writeUTF("LOGIN#" + username.getText() + "#" + password.getText());
+            if (dis.readUTF().equals("CORRECT")) {
+                chatUIDisplay();
             } else {
                 alert.setVisible(true);
                 progress.setVisible(false);
             }
-        } catch (SQLException | MalformedURLException e1) {
-            e1.printStackTrace();
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        } finally{
-            try {
-                connection.close();
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
+        } catch (IOException e) {
+            s.close();
         }
     }
 
     @FXML
-    public void signUpDisplay(ActionEvent e1) throws IOException {
+    public void signUpDisplay() throws IOException {
         login.getScene().getWindow().hide();
 
         Stage signup = new Stage();
@@ -124,7 +76,7 @@ public class LoginController implements Initializable {
         signup.show();
         signup.setResizable(false);
     }
-    
+
     public void chatUIDisplay() throws IOException {
         login.getScene().getWindow().hide();
 
