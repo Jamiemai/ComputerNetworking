@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Client/src"/>
+	<classpathentry kind="src" path="Data/src"/>
+	<classpathentry kind="src" path="Server/src"/>
+	<classpathentry kind="lib" path="Client/Data.jar"/>
+	<classpathentry kind="lib" path="Client/dist/Client.jar"/>
+	<classpathentry kind="lib" path="Client/dist/lib/Data.jar"/>
+	<classpathentry kind="lib" path="Data/dist/Data.jar"/>
+	<classpathentry kind="lib" path="Server/Data.jar"/>
+	<classpathentry kind="lib" path="Server/dist/lib/Data.jar"/>
+	<classpathentry kind="lib" path="Server/dist/Server.jar"/>
+	<classpathentry kind="output" path="Client/build/classes"/>
+</classpath>
