@@ -8,12 +8,11 @@ import java.sql.SQLException;
 
 public
 class DBconnection {
-    private static DBHandler handler;
 
     public static
     String RetriveData(String username, String password) throws SQLException, ClassNotFoundException {
         //Retrive Data from Database
-        Connection        connection = handler.getConnection();
+        Connection        connection = DBHandler.getConnection();
         String q1 = "SELECT * from chatDB where username= ? and password= ?";
         PreparedStatement pst = connection.prepareStatement(q1);
         pst.setString(1, username);
@@ -34,7 +33,7 @@ class DBconnection {
 
     public static
     String SavingData(String username, String password) throws SQLException, ClassNotFoundException {
-        Connection connection = handler.getConnection();
+        Connection connection = DBHandler.getConnection();
         PreparedStatement pst;
         // Check Same Username
         String q1 = "SELECT * from chatDB where username= ?";
