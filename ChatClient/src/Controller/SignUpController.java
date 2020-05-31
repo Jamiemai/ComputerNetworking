@@ -51,6 +51,7 @@ public class SignUpController implements Initializable {
     public void signUpAction() throws IOException {
         if (password.getText().equals(repassword.getText())) {
             progress.setVisible(true);
+
             InetAddress ip = null;
             ip = InetAddress.getByName("localhost");
 
@@ -59,15 +60,19 @@ public class SignUpController implements Initializable {
             DataInputStream  dis = new DataInputStream(s.getInputStream());
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
-            dos.writeUTF("LOGIN#" + username.getText() + "#" + password.getText());
-            if (dis.readUTF().equals("CORRECT")) {
-                displayLogin();
-            } else {
-                alert.setText("Username already exists");
-                alert.setVisible(true);
-                progress.setVisible(false);
+            try {
+                dos.writeUTF("LOGIN#" + username.getText() + "#" + password.getText());
+                if (dis.readUTF().equals("CORRECT")) {
+                    System.out.println("1");
+                    displayLogin();
+                } else {
+                    alert.setText("Username already exists");
+                    alert.setVisible(true);
+                    progress.setVisible(false);
+                }
+            } catch (IOException e) {
+                s.close();
             }
-            s.close();
         }
         else {
             alert.setText("Password does not match");

@@ -52,6 +52,7 @@ public class LoginController implements Initializable {
         s = new Socket(ip, ServerPort);
         DataInputStream dis = new DataInputStream(s.getInputStream());
         DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+
         try {
             dos.writeUTF("LOGIN#" + username.getText() + "#" + password.getText());
             if (dis.readUTF().equals("CORRECT")) {

@@ -8,8 +8,8 @@ public class DBHandler extends Configs{
 
     public static
     Connection getConnection() throws ClassNotFoundException, SQLException {
-        String connectionString = "jdbc:mysql://" + Configs.dbhost + ":" + Configs.dbport + "/" + Configs.dbname+ "?autoReconnect=true&useSSL=false";
-        Class.forName("com.mysql.jdbc.Driver");
+        String connectionString = "jdbc:mysql://" + Configs.dbhost + ":" + Configs.dbport + "/" + Configs.dbname;
+        Class.forName("com.mysql.cj.jdbc.Driver");
 
         return DriverManager.getConnection(connectionString, Configs.dbuser, Configs.dbpass);
     }
