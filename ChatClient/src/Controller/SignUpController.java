@@ -61,9 +61,8 @@ public class SignUpController implements Initializable {
             DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
             try {
-                dos.writeUTF("LOGIN#" + username.getText() + "#" + password.getText());
+                dos.writeUTF("SIGNUP#" + username.getText() + "#" + password.getText());
                 if (dis.readUTF().equals("CORRECT")) {
-                    System.out.println("1");
                     displayLogin();
                 } else {
                     alert.setText("Username already exists");
