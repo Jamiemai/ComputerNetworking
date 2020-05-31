@@ -8,7 +8,11 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
+<<<<<<< HEAD
 <AnchorPane prefHeight="700.0" prefWidth="800.0" style="-fx-background-color: #797676;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ChatController">
+=======
+<AnchorPane prefHeight="700.0" prefWidth="800.0" style="-fx-background-color: #797676;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ChatUIController">
+>>>>>>> 9e0efa7f153e021534124382b935208db9d6a090
     <children>
         <Pane prefHeight="700.0" prefWidth="220.0" style="-fx-background-color: #272E36;">
             <children>

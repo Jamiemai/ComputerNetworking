@@ -1,5 +1,6 @@
 package Controller;
 
+<<<<<<< HEAD
 import java.io.*;
 import java.net.*;
 import java.util.ResourceBundle;
@@ -7,13 +8,20 @@ import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
 
+=======
+import java.io.IOException;
+
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextField;
+import javafx.event.ActionEvent;
+>>>>>>> 9e0efa7f153e021534124382b935208db9d6a090
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+<<<<<<< HEAD
 
 public class LoginController implements Initializable {
 
@@ -22,17 +30,20 @@ public class LoginController implements Initializable {
     public JFXButton signup;
     @FXML
     private JFXTextField username;
+=======
+
+public
+class LoginController {
+>>>>>>> 9e0efa7f153e021534124382b935208db9d6a090
 
     @FXML
-    private JFXTextField password;
-
-    @FXML
-    private ImageView progress;
+    private JFXTextField username;
 
     @FXML
     private JFXButton login;
 
     @FXML
+<<<<<<< HEAD
     private JFXTextField alert;
 
     @Override
@@ -86,8 +97,35 @@ public class LoginController implements Initializable {
         Scene  scene  = new Scene(loader.load());
         ChatController controller = loader.getController();
         controller.setUsername(username.getText());
+=======
+    public
+    void loginAction(ActionEvent e) throws IOException {
+        chatUIDisplay();
+    }
+
+    @FXML
+    public
+    void login(KeyEvent e) throws IOException {
+        if (e.getCode() == KeyCode.ENTER)
+            chatUIDisplay();
+    }
+
+    public
+    void chatUIDisplay() throws IOException {
+        login.getScene().getWindow().hide();
+
+        Stage  chatUI = new Stage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/ChatUI.fxml"));
+
+        Scene  scene  = new Scene(loader.load());
+
+        ChatUIController controller = loader.getController();
+        controller.setUsername(username.getText());
+
+>>>>>>> 9e0efa7f153e021534124382b935208db9d6a090
         chatUI.setScene(scene);
         chatUI.show();
         chatUI.setResizable(false);
+
     }
 }
