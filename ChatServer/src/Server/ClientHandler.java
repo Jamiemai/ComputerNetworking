@@ -8,7 +8,6 @@ import java.net.Socket;
 // ClientHandler class
 class ClientHandler implements Runnable {
     public String name;
-    public Boolean isOnline;
     final DataInputStream dis;
     final DataOutputStream dos;
     Socket s;
@@ -43,6 +42,7 @@ class ClientHandler implements Runnable {
             } catch (IOException e) {
                 try {
                     Server.clientHandlerVector.remove(this);
+                    RemoveClient(this.name);
                     this.s.close();
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
