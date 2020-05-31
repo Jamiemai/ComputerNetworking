@@ -39,7 +39,6 @@ class DBconnection {
         String q1 = "SELECT * from chatDB where username= ?";
         pst = connection.prepareStatement(q1);
         pst.setString(1, username);
-        pst.setString(2, password);
         ResultSet rs = pst.executeQuery();
 
         int count = 0;

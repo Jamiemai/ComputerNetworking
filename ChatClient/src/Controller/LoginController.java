@@ -81,9 +81,11 @@ public class LoginController implements Initializable {
     public void chatUIDisplay() throws IOException {
         login.getScene().getWindow().hide();
 
-        Stage chatUI = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("/FXML/ChatUI.fxml"));
-        Scene scene = new Scene(root);
+        Stage  chatUI = new Stage();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/ChatUI.fxml"));
+        Scene  scene  = new Scene(loader.load());
+        ChatController controller = loader.getController();
+        controller.setUsername(username.getText());
         chatUI.setScene(scene);
         chatUI.show();
         chatUI.setResizable(false);
