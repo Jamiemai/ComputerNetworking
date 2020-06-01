@@ -41,9 +41,10 @@ class ClientHandler implements Runnable {
                 }
             } catch (IOException e) {
                 try {
+                    this.s.close();
                     Server.clientHandlerVector.remove(this);
                     RemoveClient(this.name);
-                    this.s.close();
+                    break;
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }

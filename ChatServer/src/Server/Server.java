@@ -27,18 +27,18 @@ class Server {
                 String[] msgSplit = received.split("#");
                 switch (msgSplit[0]) {
                     case "LOGIN":
-                        dos.writeUTF(DBconnection.RetriveData(msgSplit[1], msgSplit[2]));
+                        dos.writeUTF(DBconnection.GetUserData(msgSplit[1], msgSplit[2]));
                         break;
                     case "SIGNUP":
-                        dos.writeUTF(DBconnection.SavingData(msgSplit[1], msgSplit[2]));
+                        dos.writeUTF(DBconnection.SaveUserData(msgSplit[1], msgSplit[2]));
                         break;
                     case "CHAT_DISPLAY":
                         dos.writeUTF(DBconnection.GetChatData(msgSplit[1], msgSplit[2]));
                         break;
                     case "CHAT_SAVE":
-                        dos.writeUTF(DBconnection.UpdateChatData(msgSplit[1], msgSplit[2]));
+                        dos.writeUTF(DBconnection.SaveChatData(msgSplit[1], msgSplit[2], msgSplit[3]));
                         break;
-                    default:
+                    default: // NEW_CLIENT
                         // Create a new handler object for handling this request.
                         ClientHandler client = new ClientHandler(s, msgSplit[1], dis, dos);
 

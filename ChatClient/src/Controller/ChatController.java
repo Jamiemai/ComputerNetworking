@@ -154,14 +154,19 @@ class ChatController implements Initializable {
 
     private
     void sendChatLog() {
-        //try {
+        try {
+            String str = this.userName.getText();
             String chatLog = chatBox.getItems().stream()
                     .map(Object::toString)
-                    .collect(Collectors.joining(", "));
-            System.out.println(chatLog);
-            //dos.writeUTF("CHAT_SAVE#" + this.userName + "#" + selectedUser);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+                    .collect(Collectors.joining("\n"));
+            if (str.compareTo(selectedUser) > 0) {
+                dos.writeUTF("CHAT_SAVE#" + str + "#" + selectedUser + "#" + chatLog);
+            }
+            else {
+                dos.writeUTF("CHAT_SAVE#" + selectedUser + "#" + str + "#" + chatLog);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

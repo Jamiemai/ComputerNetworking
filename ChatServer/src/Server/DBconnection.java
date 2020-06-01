@@ -10,7 +10,7 @@ public
 class DBconnection {
 
     public static
-    String RetriveData(String username, String password) throws SQLException, ClassNotFoundException {
+    String GetUserData(String username, String password) throws SQLException, ClassNotFoundException {
         //Retrive Data from Database
         Connection        connection = DBHandler.getConnection();
         String q1 = "SELECT * from chatDB where username= ? and password= ?";
@@ -32,7 +32,7 @@ class DBconnection {
     }
 
     public static
-    String SavingData(String username, String password) throws SQLException, ClassNotFoundException {
+    String SaveUserData(String username, String password) throws SQLException, ClassNotFoundException {
         Connection connection = DBHandler.getConnection();
         PreparedStatement pst;
         // Check Same Username
@@ -62,24 +62,17 @@ class DBconnection {
         }
     }
     public static
-    String UpdateChatData(String from, String to) throws SQLException, ClassNotFoundException {
+    String SaveChatData(String from, String to, String messages) throws SQLException, ClassNotFoundException {
         Connection        connection = DBHandler.getConnection();
-        String q1 = "SELECT messages from chatHistory where from= ? and to= ?";
+        String q1 = "UPDATE chatHistory set messages= ? where from= ? and to= ?";
         PreparedStatement pst = connection.prepareStatement(q1);
         pst.setString(1, from);
         pst.setString(2, to);
-        ResultSet rs = pst.executeQuery();
+        pst.setString(3, messages);
 
-        int count = 0;
+        pst.executeUpdate();
 
-        while (rs.next()) {
-            count = count + 1;
-        }
         connection.close();
-        if (count == 1) {
-            System.out.println(rs.toString());
-            return rs.toString();
-        }
         return "";
     }
     public static
