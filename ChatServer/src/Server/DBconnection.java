@@ -69,9 +69,9 @@ class DBconnection {
         if (rs.next()) {
             q1 = "UPDATE chatHistory set messages= ? where fromClient= ? and toClient= ?";
             pst = connection.prepareStatement(q1);
-            pst.setString(1, from);
-            pst.setString(2, to);
-            pst.setString(3, messages);
+            pst.setString(1, messages);
+            pst.setString(2, from);
+            pst.setString(3, to);
 
             pst.executeUpdate();
 

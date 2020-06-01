@@ -161,6 +161,7 @@ class ChatController implements Initializable {
         try {
             String str = this.userName.getText();
             String chatLog = chatBox.getItems().stream()
+
                     .map(Object::toString)
                     .collect(Collectors.joining("\n"));
             if (str.compareTo(selectedUser) > 0) {
