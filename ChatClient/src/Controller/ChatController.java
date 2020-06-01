@@ -42,7 +42,9 @@ class ChatController implements Initializable {
         onlineList.setOnMouseClicked(event -> {
             String str = onlineList.getSelectionModel().getSelectedItem();
             if (str != null && ! str.equals(selectedUser)) {
-                sendChatLog();
+                if (selectedUser != null) {
+                    sendChatLog();
+                }
                 selectedUser = str;
 //                try {
 //                    dos.writeUTF("CHAT_DISPLAY#" + this.userName + "#" + selectedUser);
@@ -133,14 +135,16 @@ class ChatController implements Initializable {
     private
     void sendMessage() {
         try {
-            String msgText = message.getText();
-            String msg = selectedUser + "#" + msgText;
-            dos.writeUTF(msg);
+            if (selectedUser != null) {
+                String msgText = message.getText();
+                String msg     = selectedUser + "#" + msgText;
+                dos.writeUTF(msg);
 
-            String yourMsg = userName.getText() + ": " + msgText;
-            chatBox.getItems().add(yourMsg);
+                String yourMsg = userName.getText() + ": " + msgText;
+                chatBox.getItems().add(yourMsg);
 
-            message.clear();
+                message.clear();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

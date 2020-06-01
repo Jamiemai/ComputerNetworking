@@ -35,9 +35,6 @@ class Server {
                     case "CHAT_DISPLAY":
                         dos.writeUTF(DBconnection.GetChatData(msgSplit[1], msgSplit[2]));
                         break;
-                    case "CHAT_SAVE":
-                        dos.writeUTF(DBconnection.SaveChatData(msgSplit[1], msgSplit[2], msgSplit[3]));
-                        break;
                     default: // NEW_CLIENT
                         // Create a new handler object for handling this request.
                         ClientHandler client = new ClientHandler(s, msgSplit[1], dis, dos);
