@@ -32,21 +32,26 @@ class ClientHandler implements Runnable {
                 // receive the string
                 received = dis.readUTF();
                 // break the string into message and recipient part
-                String[] msgSplit     = received.split("#", 2);
+                String[] msgSplit = received.split("#", 2);
                 switch (msgSplit[0]) {
-                    case "CHAT_SAVE":
-                        String[] strSplit = msgSplit[1].split("#");
-                        DBconnection.SaveChatData(strSplit[0], strSplit[1], strSplit[2]);
-                        break;
                     case "CHAT_DISPLAY":
+                        String[] tmpSplit = msgSplit[1].split("#");
+                        String msg = DBconnection.GetChatData(tmpSplit[0], tmpSplit[1]);
+                        if (msg != null)
+                            this.dos.writeUTF("CHAT_DISPLAY#" + msg);
                         break;
                     default:
-                    for (ClientHandler clientHandler : Server.clientHandlerVector) {
-                        if (clientHandler.name.equals(msgSplit[0])) {
-                            clientHandler.dos.writeUTF(this.name + "#" + msgSplit[1]);
-                            break;
+                        String[] strSplit = msgSplit[1].split("#");
+                        if (strSplit[0].compareTo(strSplit[1]) > 0)
+                            DBconnection.SaveChatData(strSplit[0], strSplit[1], strSplit[2]);
+                        else
+                            DBconnection.SaveChatData(strSplit[1], strSplit[0], strSplit[2]);
+                        for (ClientHandler clientHandler : Server.clientHandlerVector) {
+                            if (clientHandler.name.equals(strSplit[1])) {
+                                clientHandler.dos.writeUTF(strSplit[0] + "#" + strSplit[2]);
+                                break;
+                            }
                         }
-                    }
                 }
             } catch (IOException e) {
                 try {
@@ -63,6 +68,7 @@ class ClientHandler implements Runnable {
 
         }
     }
+
     void RemoveClient(String name) throws IOException {
         for (ClientHandler clientHandler : Server.clientHandlerVector) {
             clientHandler.dos.writeUTF("REMOVE_USER#" + name);
@@ -82,7 +88,7 @@ class ClientHandler implements Runnable {
             msg.append(clientHandler.name).append("#");
         }
 
-        if(!msg.toString().equals("ALL_USER#")) { //first user
+        if (! msg.toString().equals("ALL_USER#")) { //first user
             this.dos.writeUTF(msg.toString());
         }
     }

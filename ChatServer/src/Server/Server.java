@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
 import java.net.*;
+
 public
 class Server {
 
@@ -31,9 +32,6 @@ class Server {
                         break;
                     case "SIGNUP":
                         dos.writeUTF(DBconnection.SaveUserData(msgSplit[1], msgSplit[2]));
-                        break;
-                    case "CHAT_DISPLAY":
-                        dos.writeUTF(DBconnection.GetChatData(msgSplit[1], msgSplit[2]));
                         break;
                     default: // NEW_CLIENT
                         // Create a new handler object for handling this request.

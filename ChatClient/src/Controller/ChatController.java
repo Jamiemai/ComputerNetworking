@@ -42,15 +42,19 @@ class ChatController implements Initializable {
         onlineList.setOnMouseClicked(event -> {
             String str = onlineList.getSelectionModel().getSelectedItem();
             if (str != null && ! str.equals(selectedUser)) {
-                if (selectedUser != null) {
-                    sendChatLog();
-                }
                 selectedUser = str;
-//                try {
-//                    dos.writeUTF("CHAT_DISPLAY#" + this.userName + "#" + selectedUser);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
+                try {
+                    chatBox.getItems().clear();
+                    String tmp = this.userName.getText();
+                    if (tmp.compareTo(selectedUser) > 0) {
+                        dos.writeUTF("CHAT_DISPLAY#" + tmp + "#" + selectedUser);
+                    }
+                    else {
+                        dos.writeUTF("CHAT_DISPLAY#" + selectedUser + "#" + tmp);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -101,11 +105,13 @@ class ChatController implements Initializable {
                             break;
                         case "CHAT_DISPLAY":
                             chatBox.getItems().clear();
-//                            chatBox.getItems().add(msgSplit[1]);
+                            String[] tmpArray = msgSplit[1].split("#");
+                            for (String str : tmpArray)
+                                chatBox.getItems().add(str);
                             break;
                         default:
-                            chatBox.getItems().add(msgSplit[0] + ": " + msgSplit[1]);
-                            break;
+                            if (selectedUser != null && selectedUser.equals(msgSplit[0]))
+                                chatBox.getItems().add(msgSplit[1]);
                     }
                     });
                 } catch (IOException e) {
@@ -136,11 +142,11 @@ class ChatController implements Initializable {
     void sendMessage() {
         try {
             if (selectedUser != null) {
-                String msgText = message.getText();
-                String msg     = selectedUser + "#" + msgText;
-                dos.writeUTF(msg);
+                String from = userName.getText();
+                String to = selectedUser;
+                String yourMsg = from + ": " +  message.getText();
 
-                String yourMsg = userName.getText() + ": " + msgText;
+                dos.writeUTF("CHAT#" + from + "#" + to + "#" + yourMsg);
                 chatBox.getItems().add(yourMsg);
 
                 message.clear();
@@ -156,22 +162,4 @@ class ChatController implements Initializable {
         dos.writeUTF("NEW_CLIENT#" + userName.getText());
     }
 
-    private
-    void sendChatLog() {
-        try {
-            String str = this.userName.getText();
-            String chatLog = chatBox.getItems().stream()
-
-                    .map(Object::toString)
-                    .collect(Collectors.joining("\n"));
-            if (str.compareTo(selectedUser) > 0) {
-                dos.writeUTF("CHAT_SAVE#" + str + "#" + selectedUser + "#" + chatLog);
-            }
-            else {
-                dos.writeUTF("CHAT_SAVE#" + selectedUser + "#" + str + "#" + chatLog);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
