@@ -12,6 +12,7 @@ import java.io.*;
 import java.net.*;
 
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 public
 class ChatController implements Initializable {
@@ -41,7 +42,13 @@ class ChatController implements Initializable {
         onlineList.setOnMouseClicked(event -> {
             String str = onlineList.getSelectionModel().getSelectedItem();
             if (str != null && ! str.equals(selectedUser)) {
+                sendChatLog();
                 selectedUser = str;
+//                try {
+//                    dos.writeUTF("CHAT_DISPLAY#" + this.userName + "#" + selectedUser);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
         });
 
@@ -52,26 +59,23 @@ class ChatController implements Initializable {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-
         Socket s = null;
         try {
             s = new Socket(ip, ServerPort);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         try {
+            assert s != null;
             dis = new DataInputStream(s.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         try {
             dos = new DataOutputStream(s.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         Socket finalS = s;
         Thread readMessage = new Thread(() -> {
             while (true) {
@@ -92,6 +96,10 @@ class ChatController implements Initializable {
                             break;
                         case "REMOVE_USER":
                             onlineList.getItems().remove(msgSplit[1]);
+                            break;
+                        case "CHAT_DISPLAY":
+                            chatBox.getItems().clear();
+//                            chatBox.getItems().add(msgSplit[1]);
                             break;
                         default:
                             chatBox.getItems().add(msgSplit[0] + ": " + msgSplit[1]);
@@ -141,7 +149,19 @@ class ChatController implements Initializable {
     public
     void setUsername(String username) throws IOException {
         userName.setText(username);
-        dos.writeUTF(userName.getText());
+        dos.writeUTF("NEW_CLIENT#" + userName.getText());
     }
 
+    private
+    void sendChatLog() {
+        //try {
+            String chatLog = chatBox.getItems().stream()
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+            System.out.println(chatLog);
+            //dos.writeUTF("CHAT_SAVE#" + this.userName + "#" + selectedUser);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
 }

@@ -45,17 +45,16 @@ public class LoginController implements Initializable {
     public void loginAction() throws IOException {
         progress.setVisible(true);
 
-        InetAddress ip = null;
-        ip = InetAddress.getByName("localhost");
+        InetAddress ip = InetAddress.getByName("localhost");
 
-        Socket s = null;
-        s = new Socket(ip, ServerPort);
+        Socket s = new Socket(ip, ServerPort);
         DataInputStream dis = new DataInputStream(s.getInputStream());
         DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 
         try {
             dos.writeUTF("LOGIN#" + username.getText() + "#" + password.getText());
             if (dis.readUTF().equals("CORRECT")) {
+                s.close();
                 chatUIDisplay();
             } else {
                 alert.setVisible(true);

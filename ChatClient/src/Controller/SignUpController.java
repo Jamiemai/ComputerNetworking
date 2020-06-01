@@ -63,6 +63,7 @@ public class SignUpController implements Initializable {
             try {
                 dos.writeUTF("SIGNUP#" + username.getText() + "#" + password.getText());
                 if (dis.readUTF().equals("CORRECT")) {
+                    s.close();
                     displayLogin();
                 } else {
                     alert.setText("Username already exists");

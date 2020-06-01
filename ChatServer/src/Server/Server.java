@@ -32,9 +32,15 @@ class Server {
                     case "SIGNUP":
                         dos.writeUTF(DBconnection.SavingData(msgSplit[1], msgSplit[2]));
                         break;
+                    case "CHAT_DISPLAY":
+                        dos.writeUTF(DBconnection.GetChatData(msgSplit[1], msgSplit[2]));
+                        break;
+                    case "CHAT_SAVE":
+                        dos.writeUTF(DBconnection.UpdateChatData(msgSplit[1], msgSplit[2]));
+                        break;
                     default:
                         // Create a new handler object for handling this request.
-                        ClientHandler client = new ClientHandler(s, dis.readUTF(), dis, dos);
+                        ClientHandler client = new ClientHandler(s, msgSplit[1], dis, dos);
 
                         for (ClientHandler clientHandler : clientHandlerVector) {
                             clientHandler.AddOnlineClient(client.name);
@@ -50,7 +56,6 @@ class Server {
 
                         // start the thread.
                         t.start();
-                        break;
                 }
             } catch (IOException e) {
                 s.close();

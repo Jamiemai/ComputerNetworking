@@ -61,4 +61,46 @@ class DBconnection {
             return "CORRECT";
         }
     }
+    public static
+    String UpdateChatData(String from, String to) throws SQLException, ClassNotFoundException {
+        Connection        connection = DBHandler.getConnection();
+        String q1 = "SELECT messages from chatHistory where from= ? and to= ?";
+        PreparedStatement pst = connection.prepareStatement(q1);
+        pst.setString(1, from);
+        pst.setString(2, to);
+        ResultSet rs = pst.executeQuery();
+
+        int count = 0;
+
+        while (rs.next()) {
+            count = count + 1;
+        }
+        connection.close();
+        if (count == 1) {
+            System.out.println(rs.toString());
+            return rs.toString();
+        }
+        return "";
+    }
+    public static
+    String GetChatData(String from, String to) throws SQLException, ClassNotFoundException {
+        Connection        connection = DBHandler.getConnection();
+        String q1 = "SELECT messages from chatHistory where from= ? and to= ?";
+        PreparedStatement pst = connection.prepareStatement(q1);
+        pst.setString(1, from);
+        pst.setString(2, to);
+        ResultSet rs = pst.executeQuery();
+
+        int count = 0;
+
+        while (rs.next()) {
+            count = count + 1;
+        }
+        connection.close();
+        if (count == 1) {
+            System.out.println(rs.toString());
+            return rs.toString();
+        }
+        return "";
+    }
 }
