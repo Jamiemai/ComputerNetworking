@@ -4,11 +4,14 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.*;
@@ -168,7 +171,29 @@ class ChatController implements Initializable {
     }
 
     public
-    void createGroupChat() {
-        
+    void createGroupChat() throws IOException {
+        Stage          createGroup     = new Stage();
+        FXMLLoader     loader     = new FXMLLoader(getClass().getResource("/FXML/CreateGroup.fxml"));
+        Scene          scene      = new Scene(loader.load());
+        CreateGroupController controller = loader.getController();
+        String tmp = getOnlineUser();
+        if (tmp != null && !tmp.trim().isEmpty()) {
+            String[] onlineUser = tmp.split("#");
+            for (String user : onlineUser) {
+                CheckBox checkBox = new CheckBox();
+                checkBox.setText(user);
+                controller.groupMember.getItems().add(checkBox);
+            }
+        }
+        createGroup.setScene(scene);
+        createGroup.show();
+        createGroup.setResizable(false);
+    }
+
+    public
+    String getOnlineUser() {
+        return onlineList.getItems().stream()
+                .map(Object::toString)
+                .collect(Collectors.joining("#"));
     }
 }
