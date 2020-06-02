@@ -40,6 +40,9 @@ class ClientHandler implements Runnable {
                         if (msg != null)
                             this.dos.writeUTF("CHAT_DISPLAY#" + msg);
                         break;
+                    case "GROUP_CREATE":
+
+                        break;
                     default:
                         String[] strSplit = msgSplit[1].split("#");
                         if (strSplit[0].compareTo(strSplit[1]) > 0)

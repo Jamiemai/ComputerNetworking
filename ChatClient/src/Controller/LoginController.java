@@ -65,7 +65,6 @@ public class LoginController implements Initializable {
         }
     }
 
-    @FXML
     public void signUpDisplay() throws IOException {
         login.getScene().getWindow().hide();
 

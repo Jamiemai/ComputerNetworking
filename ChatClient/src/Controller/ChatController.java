@@ -1,8 +1,10 @@
 package Controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.input.KeyCode;
@@ -35,6 +37,9 @@ class ChatController implements Initializable {
 
     private DataInputStream dis;
     private DataOutputStream dos;
+
+    @FXML
+    private JFXButton createGroup;
 
     @Override
     public
@@ -162,4 +167,8 @@ class ChatController implements Initializable {
         dos.writeUTF("NEW_CLIENT#" + userName.getText());
     }
 
+    public
+    void createGroupChat() {
+        
+    }
 }
