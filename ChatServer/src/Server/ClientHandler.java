@@ -47,7 +47,7 @@ class ClientHandler implements Runnable {
                             this.dos.writeUTF("CHAT_DISPLAY#" + temp);
                         break;
                     case "GROUP_CHAT":
-                        DBconnection.SaveChatData(tmpSplit[1], null, tmpSplit[2]);
+                        DBconnection.SaveChatData(tmpSplit[1], "null", tmpSplit[2]);
                         for (GroupHandler groupHandler : Server.groupHandlerVector) {
                             for (ClientHandler clientHandler : groupHandler.clientHandlerVector) {
                                 String[] tmpsplit = groupHandler.groupName.split("#");

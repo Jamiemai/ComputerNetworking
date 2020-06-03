@@ -50,16 +50,16 @@ class ChatController implements Initializable {
                 selectedUser = str;
                 try {
                     chatBox.getItems().clear();
-                    String tmp = this.userName.getText();
-                    if (tmp.indexOf(',') != -1) {
+                    if (selectedUser.indexOf(',') != -1) {
+                        dos.writeUTF("GROUPCHAT_DISPLAY#" + str);
+                    }
+                    else {
+                        String tmp = this.userName.getText();
                         if (tmp.compareTo(selectedUser) > 0) {
                             dos.writeUTF("CHAT_DISPLAY#" + tmp + "#" + selectedUser);
                         } else {
                             dos.writeUTF("CHAT_DISPLAY#" + selectedUser + "#" + tmp);
                         }
-                    }
-                    else {
-                        dos.writeUTF("GROUPCHAT_DISPLAY#" + str);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -158,16 +158,16 @@ class ChatController implements Initializable {
                     String from    = userName.getText();
                     String to      = selectedUser;
                     String yourMsg = from + ": " + message.getText();
-
-                    dos.writeUTF("CHAT#" + from + "#" + to + "#" + yourMsg);
-                    chatBox.getItems().add(yourMsg);
+                    dos.writeUTF("GROUP_CHAT#" + from + "#" + to + "#" + yourMsg);
                     message.clear();
                 }
                 else {
                     String from    = userName.getText();
                     String to      = selectedUser;
                     String yourMsg = from + ": " + message.getText();
-                    dos.writeUTF("GROUP_CHAT#" + from + "#" + to + "#" + yourMsg);
+
+                    dos.writeUTF("CHAT#" + from + "#" + to + "#" + yourMsg);
+                    chatBox.getItems().add(yourMsg);
                     message.clear();
                 }
             }

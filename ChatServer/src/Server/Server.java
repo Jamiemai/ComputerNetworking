@@ -1,7 +1,5 @@
 package Server;
 
-import com.mysql.cj.xdevapi.Client;
-
 import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
@@ -75,14 +73,5 @@ class Server {
                 s.close();
             }
         }
-    }
-}
-class GroupHandler {
-    public Vector<ClientHandler> clientHandlerVector = new Vector<>();
-    public String groupName;
-
-    public
-    GroupHandler(String groupName) {
-        this.groupName = groupName;
     }
 }
