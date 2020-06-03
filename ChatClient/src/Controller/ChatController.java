@@ -59,7 +59,7 @@ class ChatController implements Initializable {
                         }
                     }
                     else {
-                        dos.writeUTF("CHAT_DISPLAY#" + str);
+                        dos.writeUTF("GROUPCHAT_DISPLAY#" + str);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -123,7 +123,7 @@ class ChatController implements Initializable {
                             break;
                         default:
                             if (selectedUser != null && selectedUser.equals(msgSplit[0]))
-                                chatBox.getItems().add(msgSplit[1]);
+                                chatBox.getItems().add(msgSplit[0] + ": " + msgSplit[1]);
                     }
                     });
                 } catch (IOException e) {
@@ -165,7 +165,7 @@ class ChatController implements Initializable {
                 }
                 else {
                     String from    = userName.getText();
-                    String to      = selectedUser.replace(", ", "#");
+                    String to      = selectedUser;
                     String yourMsg = from + ": " + message.getText();
                     dos.writeUTF("GROUP_CHAT#" + from + "#" + to + "#" + yourMsg);
                     message.clear();

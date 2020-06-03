@@ -31,7 +31,7 @@ class CreateGroupController {
         createGroup.append(userName);
         for (CheckBox checkBox : groupMember.getItems()) {
             if (checkBox.isSelected()) {
-                createGroup.append("#").append(checkBox.getText());
+                createGroup.append(",").append(checkBox.getText());
             }
         }
 

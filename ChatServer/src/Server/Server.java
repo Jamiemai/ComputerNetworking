@@ -38,7 +38,7 @@ class Server {
                     case "GROUP_CREATE":
                         GroupHandler groupHandler = new GroupHandler(msgSplit[2]);
                         groupHandlerVector.add(groupHandler);
-                        String[] tmpSplit = msgSplit[2].split("#");
+                        String[] tmpSplit = msgSplit[2].split(",");
                         for (String tmp : tmpSplit) {
                             for (ClientHandler clientHandler : clientHandlerVector) {
                                 if (clientHandler.name.equals(tmp)) {
