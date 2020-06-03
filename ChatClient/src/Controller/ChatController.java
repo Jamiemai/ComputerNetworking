@@ -1,6 +1,5 @@
 package Controller;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
@@ -60,7 +59,7 @@ class ChatController implements Initializable {
                         }
                     }
                     else {
-                        dos.writeUTF("CHAT_DISPLAY#" + tmp.replace(", ", "#") + "#" + null);
+                        dos.writeUTF("CHAT_DISPLAY#" + str);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

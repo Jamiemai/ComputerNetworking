@@ -37,7 +37,8 @@ class ClientHandler implements Runnable {
                 String[] tmpSplit = msgSplit[1].split("#");
                 switch (msgSplit[0]) {
                     case "CHAT_DISPLAY":
-                        String msg = DBconnection.GetChatData(tmpSplit[0], tmpSplit[1]);
+                        System.out.println(msgSplit[1]);
+                        String msg = DBconnection.GetChatData(msgSplit[1], null);
                         if (msg != null)
                             this.dos.writeUTF("CHAT_DISPLAY#" + msg);
                         break;
