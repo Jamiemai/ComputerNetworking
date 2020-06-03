@@ -51,7 +51,7 @@ class ChatController implements Initializable {
                 try {
                     chatBox.getItems().clear();
                     if (selectedUser.indexOf(',') != -1) {
-                        dos.writeUTF("GROUPCHAT_DISPLAY#" + str);
+                        dos.writeUTF("GROUP_CHAT_DISPLAY#" + str);
                     }
                     else {
                         String tmp = this.userName.getText();
@@ -121,9 +121,14 @@ class ChatController implements Initializable {
                             for (String str : tmpArray)
                                 chatBox.getItems().add(str);
                             break;
+                        case "GROUP_CHAT":
+                            String[] tmpSplit = msgSplit[1].split("#");
+                            if (selectedUser != null && selectedUser.equals(tmpSplit[1]))
+                                chatBox.getItems().add(tmpSplit[2]);
+                            break;
                         default:
                             if (selectedUser != null && selectedUser.equals(msgSplit[0]))
-                                chatBox.getItems().add(msgSplit[0] + ": " + msgSplit[1]);
+                                chatBox.getItems().add(msgSplit[1]);
                     }
                     });
                 } catch (IOException e) {

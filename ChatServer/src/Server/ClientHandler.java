@@ -41,8 +41,8 @@ class ClientHandler implements Runnable {
                         if (msg != null)
                             this.dos.writeUTF("CHAT_DISPLAY#" + msg);
                         break;
-                    case "GROUPCHAT_DISPLAY":
-                        String temp = DBconnection.GetChatData(msgSplit[1], null);
+                    case "GROUP_CHAT_DISPLAY":
+                        String temp = DBconnection.GetChatData(msgSplit[1], "null");
                         if (temp != null)
                             this.dos.writeUTF("CHAT_DISPLAY#" + temp);
                         break;
@@ -50,10 +50,10 @@ class ClientHandler implements Runnable {
                         DBconnection.SaveChatData(tmpSplit[1], "null", tmpSplit[2]);
                         for (GroupHandler groupHandler : Server.groupHandlerVector) {
                             for (ClientHandler clientHandler : groupHandler.clientHandlerVector) {
-                                String[] tmpsplit = groupHandler.groupName.split("#");
+                                String[] tmpsplit = groupHandler.groupName.split(",");
                                 for (String tmp : tmpsplit) {
                                     if (clientHandler.name.equals(tmp)) {
-                                        clientHandler.dos.writeUTF(tmpSplit[0] + "#" + tmpSplit[2]);
+                                        clientHandler.dos.writeUTF("GROUP_CHAT#" + tmpSplit[0] + "#" + tmpSplit[1] + "#" + tmpSplit[2]);
                                     }
                                 }
                             }
