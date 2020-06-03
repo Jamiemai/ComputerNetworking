@@ -33,6 +33,12 @@ class Server {
                     case "SIGNUP":
                         dos.writeUTF(DBconnection.SaveUserData(msgSplit[1], msgSplit[2]));
                         break;
+                    case "GROUP_ADD_CLIENT":
+
+                        break;
+                    case "GROUP_REMOVE_CLIENT":
+
+                        break;
                     case "GROUP_CREATE":
                         GroupHandler groupHandler = new GroupHandler(msgSplit[2]);
                         groupHandlerVector.add(groupHandler);

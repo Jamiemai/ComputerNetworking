@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
@@ -29,6 +30,11 @@ class ChatController implements Initializable {
     private JFXTextField message;
 
     @FXML
+    private ImageView add;
+    @FXML
+    private ImageView remove;
+
+    @FXML
     private JFXTextField userName;
 
     @FXML
@@ -44,6 +50,7 @@ class ChatController implements Initializable {
     @Override
     public
     void initialize(URL arg0, ResourceBundle arg1) {
+        GroupAddRemoveOff();
         onlineList.setOnMouseClicked(event -> {
             String str = onlineList.getSelectionModel().getSelectedItem();
             if (str != null && ! str.equals(selectedUser)) {
@@ -51,9 +58,11 @@ class ChatController implements Initializable {
                 try {
                     chatBox.getItems().clear();
                     if (selectedUser.indexOf(',') != -1) {
+                        GroupAddRemoveOn();
                         dos.writeUTF("GROUP_CHAT_DISPLAY#" + str);
                     }
                     else {
+                        GroupAddRemoveOff();
                         String tmp = this.userName.getText();
                         if (tmp.compareTo(selectedUser) > 0) {
                             dos.writeUTF("CHAT_DISPLAY#" + tmp + "#" + selectedUser);
@@ -190,9 +199,9 @@ class ChatController implements Initializable {
     public
     void createGroupChat() throws IOException {
         Stage          createGroup     = new Stage();
-        FXMLLoader     loader     = new FXMLLoader(getClass().getResource("/FXML/CreateGroup.fxml"));
-        Scene          scene      = new Scene(loader.load());
-        CreateGroupController controller = loader.getController();
+        FXMLLoader     loader     = new FXMLLoader(getClass().getResource("/FXML/Group.fxml"));
+        Scene           scene      = new Scene(loader.load());
+        GroupController controller = loader.getController();
         controller.setUsername(userName.getText());
         String tmp = getOnlineUser();
         if (tmp != null && !tmp.trim().isEmpty()) {
@@ -210,8 +219,83 @@ class ChatController implements Initializable {
 
     public
     String getOnlineUser() {
-        return onlineList.getItems().stream()
+        String str =  onlineList.getItems().stream()
                 .map(Object::toString)
                 .collect(Collectors.joining("#"));
+        String[] strSplit = str.split("#");
+        for (String tmp : strSplit) {
+            if (tmp.indexOf(',') != -1) {
+                str = str.replace(tmp + "#", "");
+            }
+        }
+        return str;
+    }
+
+    public
+    void fileSend() {
+
+    }
+
+    public
+    void groupAdd() throws IOException {
+        Stage          createGroup     = new Stage();
+        FXMLLoader     loader     = new FXMLLoader(getClass().getResource("/FXML/Group.fxml"));
+        Scene           scene      = new Scene(loader.load());
+        GroupController controller = loader.getController();
+        controller.setAction("ADD_CLIENT");
+        String          tmp        = getOnlineUser();
+        String[] tmpSplit = tmp.split("#"); // User online
+        String[] strSplit = selectedUser.split(","); // User already in group
+        for (String temp : tmpSplit) {
+            for (String str: strSplit) {
+                if (temp.equals(str)) {
+                    tmp = tmp.replace(temp + "#", "");
+                    break;
+                }
+            }
+        }
+        tmpSplit = tmp.split("#");
+        for (String user : tmpSplit) {
+            if (user != null && !user.trim().isEmpty()) {
+                CheckBox checkBox = new CheckBox();
+                checkBox.setText(user);
+                controller.groupMember.getItems().add(checkBox);
+            }
+        }
+        createGroup.setScene(scene);
+        createGroup.show();
+        createGroup.setResizable(false);
+    }
+
+    public
+    void groupRemove() throws IOException {
+        Stage          createGroup     = new Stage();
+        FXMLLoader     loader     = new FXMLLoader(getClass().getResource("/FXML/Group.fxml"));
+        Scene           scene      = new Scene(loader.load());
+        GroupController controller = loader.getController();
+        controller.setAction("REMOVE_CLIENT");
+        String[]        strSplit   = selectedUser.split(",");
+        for (String user : strSplit) {
+            CheckBox checkBox = new CheckBox();
+            checkBox.setText(user);
+            controller.groupMember.getItems().add(checkBox);
+        }
+        createGroup.setScene(scene);
+        createGroup.show();
+        createGroup.setResizable(false);
+    }
+
+    void GroupAddRemoveOn(){
+        add.setVisible(true);
+        add.setDisable(false);
+        remove.setVisible(true);
+        remove.setDisable(false);
+    }
+
+    void GroupAddRemoveOff(){
+        add.setVisible(false);
+        add.setDisable(true);
+        remove.setVisible(false);
+        remove.setDisable(true);
     }
 }
