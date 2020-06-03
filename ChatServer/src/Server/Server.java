@@ -56,7 +56,7 @@ class Server {
                         for (ClientHandler clientHandler : clientHandlerVector) {
                             clientHandler.AddOnlineClient(client.name);
                         }
-
+                        client.AddJoinedGroup();
                         client.AddAllOnlineClient();
 
                         // add new client to active clients list

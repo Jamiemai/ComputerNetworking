@@ -104,4 +104,19 @@ class DBconnection {
         connection.close();
         return null;
     }
+
+    public static
+    String GetGroupData() throws SQLException, ClassNotFoundException {
+        Connection        connection = DBHandler.getConnection();
+        String            q1         = "SELECT * from chatHistory where toClient= ?";
+        PreparedStatement pst        = connection.prepareStatement(q1);
+        pst.setString(1, "null");
+        ResultSet rs = pst.executeQuery();
+        StringBuilder stringBuilder = new StringBuilder();
+        while (rs.next()) {
+            stringBuilder.append(rs.getString("fromClient")).append("#");
+        }
+        connection.close();
+        return stringBuilder.toString();
+    }
 }

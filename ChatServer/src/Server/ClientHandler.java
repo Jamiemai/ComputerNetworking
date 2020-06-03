@@ -116,4 +116,18 @@ class ClientHandler implements Runnable {
     void AddGroup(String groupName) throws IOException {
         this.dos.writeUTF("NEW_GROUP#" + groupName);
     }
+
+    public
+    void AddJoinedGroup() throws SQLException, ClassNotFoundException, IOException {
+        String[] tmpSplit = DBconnection.GetGroupData().split("#");
+        for (String tmp : tmpSplit) {
+            String[] strSplit = tmp.split(",");
+            for (String str : strSplit) {
+                if (this.name.equals(str)) {
+                    AddGroup(tmp);
+                    break;
+                }
+            }
+        }
+    }
 }
