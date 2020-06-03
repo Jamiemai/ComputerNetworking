@@ -41,8 +41,6 @@ class ChatController implements Initializable {
     private DataInputStream dis;
     private DataOutputStream dos;
 
-    @FXML
-    private JFXButton createGroup;
 
     @Override
     public
@@ -54,11 +52,15 @@ class ChatController implements Initializable {
                 try {
                     chatBox.getItems().clear();
                     String tmp = this.userName.getText();
-                    if (tmp.compareTo(selectedUser) > 0) {
-                        dos.writeUTF("CHAT_DISPLAY#" + tmp + "#" + selectedUser);
+                    if (tmp.indexOf(',') != -1) {
+                        if (tmp.compareTo(selectedUser) > 0) {
+                            dos.writeUTF("CHAT_DISPLAY#" + tmp + "#" + selectedUser);
+                        } else {
+                            dos.writeUTF("CHAT_DISPLAY#" + selectedUser + "#" + tmp);
+                        }
                     }
                     else {
-                        dos.writeUTF("CHAT_DISPLAY#" + selectedUser + "#" + tmp);
+                        dos.writeUTF("CHAT_DISPLAY#" + tmp.replace(", ", "#") + "#" + null);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -102,6 +104,9 @@ class ChatController implements Initializable {
                         case "NEW_USER":
                             onlineList.getItems().add(msgSplit[1]);
                             break;
+                        case "NEW_GROUP":
+                            onlineList.getItems().add(msgSplit[1].replace("#", ", "));
+                            break;
                         case "ALL_USER":
                             String[] userString = msgSplit[1].split("#");
                             for (String user : userString) {
@@ -109,7 +114,7 @@ class ChatController implements Initializable {
                             }
                             break;
                         case "REMOVE_USER":
-                            onlineList.getItems().remove(msgSplit[1]);
+                           onlineList.getItems().remove(msgSplit[1]);
                             break;
                         case "CHAT_DISPLAY":
                             chatBox.getItems().clear();
@@ -150,14 +155,22 @@ class ChatController implements Initializable {
     void sendMessage() {
         try {
             if (selectedUser != null) {
-                String from = userName.getText();
-                String to = selectedUser;
-                String yourMsg = from + ": " +  message.getText();
+                if (selectedUser.indexOf(',') != -1) {
+                    String from    = userName.getText();
+                    String to      = selectedUser;
+                    String yourMsg = from + ": " + message.getText();
 
-                dos.writeUTF("CHAT#" + from + "#" + to + "#" + yourMsg);
-                chatBox.getItems().add(yourMsg);
-
-                message.clear();
+                    dos.writeUTF("CHAT#" + from + "#" + to + "#" + yourMsg);
+                    chatBox.getItems().add(yourMsg);
+                    message.clear();
+                }
+                else {
+                    String from    = userName.getText();
+                    String to      = selectedUser.replace(", ", "#");
+                    String yourMsg = from + ": " + message.getText();
+                    dos.writeUTF("GROUP_CHAT#" + from + "#" + to + "#" + yourMsg);
+                    message.clear();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -176,6 +189,7 @@ class ChatController implements Initializable {
         FXMLLoader     loader     = new FXMLLoader(getClass().getResource("/FXML/CreateGroup.fxml"));
         Scene          scene      = new Scene(loader.load());
         CreateGroupController controller = loader.getController();
+        controller.setUsername(userName.getText());
         String tmp = getOnlineUser();
         if (tmp != null && !tmp.trim().isEmpty()) {
             String[] onlineUser = tmp.split("#");

@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextField;
@@ -19,7 +21,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-public class SignUpController implements Initializable {
+public
+class SignUpController implements Initializable {
 
     final static int ServerPort = 1234;
 
@@ -42,56 +45,71 @@ public class SignUpController implements Initializable {
     private JFXTextField alert;
 
     @Override
-    public void initialize(URL arg0, ResourceBundle arg1) {
+    public
+    void initialize(URL arg0, ResourceBundle arg1) {
         alert.setVisible(false);
         progress.setVisible(false);
     }
 
     @FXML
-    public void signUpAction() throws IOException {
+    public
+    void signUpAction() throws IOException {
         if (password.getText().equals(repassword.getText())) {
-            progress.setVisible(true);
 
-            InetAddress ip = null;
-            ip = InetAddress.getByName("localhost");
+            Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
+            Matcher match   = pattern.matcher(username.toString());
+            boolean val     = match.find();
+            if (val) {
+                alert.setText("Username must not contain special characters");
+                alert.setVisible(true);
+                progress.setVisible(false);
+            } else {
+                progress.setVisible(true);
 
-            Socket s = null;
-            s = new Socket(ip, ServerPort);
-            DataInputStream  dis = new DataInputStream(s.getInputStream());
-            DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+                InetAddress ip = null;
+                ip = InetAddress.getByName("localhost");
 
-            try {
-                dos.writeUTF("SIGNUP#" + username.getText() + "#" + password.getText());
-                if (dis.readUTF().equals("CORRECT")) {
+                Socket s = null;
+                s = new Socket(ip, ServerPort);
+                DataInputStream  dis = new DataInputStream(s.getInputStream());
+                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+
+                try {
+                    dos.writeUTF("SIGNUP#" + username.getText() + "#" + password.getText());
+                    if (dis.readUTF().equals("CORRECT")) {
+                        s.close();
+                        displayLogin();
+                    } else {
+                        alert.setText("Username already exists");
+                        alert.setVisible(true);
+                        progress.setVisible(false);
+                    }
+                } catch (IOException e) {
                     s.close();
-                    displayLogin();
-                } else {
-                    alert.setText("Username already exists");
-                    alert.setVisible(true);
-                    progress.setVisible(false);
                 }
-            } catch (IOException e) {
-                s.close();
             }
-        }
-        else {
+        } else {
             alert.setText("Password does not match");
             alert.setVisible(true);
             progress.setVisible(false);
         }
     }
+
     @FXML
-    public void loginButtonClicked(ActionEvent e1) throws IOException {
+    public
+    void loginButtonClicked(ActionEvent e1) throws IOException {
         displayLogin();
     }
 
-    public void displayLogin() throws IOException {
+    public
+    void displayLogin() throws IOException {
         signup.getScene().getWindow().hide();
 
-        Stage login = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("/FXML/LoginUI.fxml"));
-        Scene scene = new Scene(root);
+        Stage  login = new Stage();
+        Parent root  = FXMLLoader.load(getClass().getResource("/FXML/LoginUI.fxml"));
+        Scene  scene = new Scene(root);
         login.setScene(scene);
+        login.setTitle("Seen");
         login.show();
         login.setResizable(false);
     }

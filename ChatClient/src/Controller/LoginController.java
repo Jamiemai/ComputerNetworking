@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 
 import javafx.fxml.FXMLLoader;
@@ -24,7 +25,7 @@ public class LoginController implements Initializable {
     private JFXTextField username;
 
     @FXML
-    private JFXTextField password;
+    private JFXPasswordField password;
 
     @FXML
     private ImageView progress;
@@ -72,6 +73,7 @@ public class LoginController implements Initializable {
         Parent root = FXMLLoader.load(getClass().getResource("/FXML/SignUpUI.fxml"));
         Scene scene = new Scene(root);
         signup.setScene(scene);
+        signup.setTitle("Seen");
         signup.show();
         signup.setResizable(false);
     }
@@ -85,6 +87,7 @@ public class LoginController implements Initializable {
         ChatController controller = loader.getController();
         controller.setUsername(username.getText());
         chatUI.setScene(scene);
+        chatUI.setTitle("Seen");
         chatUI.show();
         chatUI.setResizable(false);
     }

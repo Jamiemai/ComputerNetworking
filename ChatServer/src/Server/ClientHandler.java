@@ -1,9 +1,10 @@
 package Server;
 
+import com.mysql.cj.xdevapi.Client;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.Socket;
 import java.sql.SQLException;
 
@@ -33,28 +34,38 @@ class ClientHandler implements Runnable {
                 received = dis.readUTF();
                 // break the string into message and recipient part
                 String[] msgSplit = received.split("#", 2);
+                String[] tmpSplit = msgSplit[1].split("#");
                 switch (msgSplit[0]) {
                     case "CHAT_DISPLAY":
-                        String[] tmpSplit = msgSplit[1].split("#");
                         String msg = DBconnection.GetChatData(tmpSplit[0], tmpSplit[1]);
                         if (msg != null)
                             this.dos.writeUTF("CHAT_DISPLAY#" + msg);
                         break;
-                    case "GROUP_CREATE":
-
+                    case "GROUP_CHAT":
+                        DBconnection.SaveChatData(tmpSplit[1], null, tmpSplit[2]);
+                        for (GroupHandler groupHandler : Server.groupHandlerVector) {
+                            for (ClientHandler clientHandler : groupHandler.clientHandlerVector) {
+                                String[] tmpsplit = groupHandler.groupName.split("#");
+                                for (String tmp : tmpsplit) {
+                                    if (clientHandler.name.equals(tmp)) {
+                                        clientHandler.dos.writeUTF(tmpSplit[0] + "#" + tmpSplit[2]);
+                                    }
+                                }
+                            }
+                        }
                         break;
-                    default:
-                        String[] strSplit = msgSplit[1].split("#");
-                        if (strSplit[0].compareTo(strSplit[1]) > 0)
-                            DBconnection.SaveChatData(strSplit[0], strSplit[1], strSplit[2]);
+                    case "CHAT":
+                        if (tmpSplit[0].compareTo(tmpSplit[1]) > 0)
+                            DBconnection.SaveChatData(tmpSplit[0], tmpSplit[1], tmpSplit[2]);
                         else
-                            DBconnection.SaveChatData(strSplit[1], strSplit[0], strSplit[2]);
+                            DBconnection.SaveChatData(tmpSplit[1], tmpSplit[0], tmpSplit[2]);
                         for (ClientHandler clientHandler : Server.clientHandlerVector) {
-                            if (clientHandler.name.equals(strSplit[1])) {
-                                clientHandler.dos.writeUTF(strSplit[0] + "#" + strSplit[2]);
+                            if (clientHandler.name.equals(tmpSplit[1])) {
+                                clientHandler.dos.writeUTF(tmpSplit[0] + "#" + tmpSplit[2]);
                                 break;
                             }
                         }
+                        break;
                 }
             } catch (IOException e) {
                 try {
@@ -94,5 +105,10 @@ class ClientHandler implements Runnable {
         if (! msg.toString().equals("ALL_USER#")) { //first user
             this.dos.writeUTF(msg.toString());
         }
+    }
+
+    public
+    void AddGroup(String groupName) throws IOException {
+        this.dos.writeUTF("NEW_GROUP#" + groupName);
     }
 }
