@@ -1,7 +1,5 @@
 package Server;
 
-import com.mysql.cj.xdevapi.Client;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -118,6 +116,11 @@ class ClientHandler implements Runnable {
     }
 
     public
+    void RemoveGroup(String groupName) throws IOException {
+        this.dos.writeUTF("REMOVE_GROUP#" + groupName);
+    }
+
+    public
     void AddJoinedGroup() throws SQLException, ClassNotFoundException, IOException {
         String[] tmpSplit = DBconnection.GetGroupData().split("#");
         for (String tmp : tmpSplit) {
@@ -125,6 +128,11 @@ class ClientHandler implements Runnable {
             for (String str : strSplit) {
                 if (this.name.equals(str)) {
                     AddGroup(tmp);
+                    for (GroupHandler groupHandler : Server.groupHandlerVector) {
+                        if (groupHandler.groupName.equals(tmp)) {
+                            groupHandler.clientHandlerVector.add(this);
+                        }
+                    }
                     break;
                 }
             }

@@ -123,7 +123,8 @@ class ChatController implements Initializable {
                             }
                             break;
                         case "REMOVE_USER":
-                           onlineList.getItems().remove(msgSplit[1]);
+                        case "REMOVE_GROUP":
+                            onlineList.getItems().remove(msgSplit[1]);
                             break;
                         case "CHAT_DISPLAY":
                             chatBox.getItems().clear();
@@ -289,6 +290,7 @@ class ChatController implements Initializable {
         GroupController controller = loader.getController();
         controller.setAction("REMOVE_CLIENT");
         controller.setGroupName(selectedUser);
+        controller.setUsername(userName.getText());
         String[]        strSplit   = selectedUser.split(",");
         for (String user : strSplit) {
             CheckBox checkBox = new CheckBox();

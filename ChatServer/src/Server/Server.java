@@ -10,8 +10,10 @@ class Server {
 
     static Vector<ClientHandler> clientHandlerVector = new Vector<>();
     static Vector<GroupHandler> groupHandlerVector = new Vector<>();
+
     public static
     void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
+        getGroup();
         ServerSocket ss = new ServerSocket(1234);
 
         Socket s;
@@ -35,12 +37,12 @@ class Server {
                         break;
                     case "GROUP_ADD_CLIENT":
                         for (GroupHandler groupHandler : groupHandlerVector) {
-                            if (groupHandler.groupName.equals(msgSplit[1])) {
-                                String newClient = msgSplit[2].replace(msgSplit[1] + ',', "");
+                            if(groupHandler.groupName.equals(msgSplit[1])) {
+                                String   newClient   = msgSplit[2].replace(msgSplit[1] + ',', "");
                                 String[] clientSplit = newClient.split(",");
                                 for (ClientHandler clientHandler : clientHandlerVector) {
                                     for (String tmp : clientSplit) {
-                                        if (clientHandler.name.equals(tmp)) {
+                                        if(clientHandler.name.equals(tmp)) {
                                             clientHandler.AddGroup(msgSplit[2]);
                                             break;
                                         }
@@ -56,7 +58,25 @@ class Server {
                         }
                         break;
                     case "GROUP_REMOVE_CLIENT":
-
+                        String[] tempSplit = msgSplit[2].split("#");
+                        for (GroupHandler groupHandler : groupHandlerVector) {
+                            if(groupHandler.groupName.equals(msgSplit[1])) {
+                                groupHandler.groupName = msgSplit[1].replace(tempSplit[1], "");
+                                DBconnection.changeGroupName(groupHandler.groupName, msgSplit[1]);
+                                String[] removeClient = tempSplit[1].split(",");
+                                for (ClientHandler clientHandler : clientHandlerVector) {
+                                    for (String tmp : removeClient) {
+                                        if(clientHandler.name.equals(tmp)) {
+                                            clientHandler.RemoveGroup(msgSplit[1]);
+                                            break;
+                                        }
+                                        else if (clientHandler.name.equals(tempSplit[0])) {
+                                            clientHandler.changeGroupName(groupHandler.groupName, msgSplit[1]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         break;
                     case "GROUP_CREATE":
                         GroupHandler groupHandler = new GroupHandler(msgSplit[2]);
@@ -64,14 +84,14 @@ class Server {
                         String[] tmpSplit = msgSplit[2].split(",");
                         for (String tmp : tmpSplit) {
                             for (ClientHandler clientHandler : clientHandlerVector) {
-                                if (clientHandler.name.equals(tmp)) {
+                                if(clientHandler.name.equals(tmp)) {
                                     groupHandler.clientHandlerVector.add(clientHandler);
                                     break;
                                 }
                             }
                         }
                         for (ClientHandler clientHandler : groupHandler.clientHandlerVector) {
-                            clientHandler.AddGroup(groupHandler.groupName.toString());
+                            clientHandler.AddGroup(groupHandler.groupName);
                         }
                         break;
                     case "NEW_CLIENT":
@@ -97,6 +117,15 @@ class Server {
             } catch (IOException e) {
                 s.close();
             }
+        }
+    }
+
+    private static
+    void getGroup() throws SQLException, ClassNotFoundException {
+        String[] groupArray = DBconnection.GetGroupData().split("#");
+        for (String group : groupArray) {
+            GroupHandler groupHandler = new GroupHandler(group);
+            groupHandlerVector.add(groupHandler);
         }
     }
 }

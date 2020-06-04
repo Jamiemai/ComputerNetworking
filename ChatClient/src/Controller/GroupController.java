@@ -50,6 +50,7 @@ class GroupController {
             case "REMOVE_CLIENT":
                 group.append("GROUP_REMOVE_CLIENT#");
                 group.append(groupName + "#");
+                group.append(userName + "#");
                 break;
             case "CREATE_GROUP":
                 group.append("GROUP_CREATE#");
