@@ -15,6 +15,7 @@ public class Client extends Application {
             Parent root = FXMLLoader.load(getClass().getResource("/FXML/LoginUI.fxml"));
             Scene scene = new Scene(root);
             primaryStage.setScene(scene);
+            primaryStage.setTitle("Seen");
             primaryStage.show();
             primaryStage.setResizable(false);
         } catch(Exception e) {
