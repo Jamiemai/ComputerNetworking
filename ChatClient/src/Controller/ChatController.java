@@ -46,7 +46,6 @@ class ChatController implements Initializable {
 
     private DataInputStream dis;
     private DataOutputStream dos;
-    private Object[] onlineArray;
 
 
     @Override
@@ -141,11 +140,12 @@ class ChatController implements Initializable {
                             String[] temp = msgSplit[1].split("#");
                             Object[] onlineArray = onlineList.getItems().toArray();
                             for (int i = 0; i < onlineArray.length; i++) {
-                                if (onlineArray[i].toString().equals(temp[2])) {
-                                    onlineList.getItems().set(i, temp[1]);
+                                if (onlineArray[i].toString().equals(temp[1])) {
+                                    onlineList.getItems().set(i, temp[0]);
                                     break;
                                 }
                             }
+                            selectedUser = temp[0];
                             break;
                         default:
                             if (selectedUser != null && selectedUser.equals(msgSplit[0]))
@@ -232,16 +232,14 @@ class ChatController implements Initializable {
 
     public
     String getOnlineUser() {
-        String str =  onlineList.getItems().stream()
-                .map(Object::toString)
-                .collect(Collectors.joining("#"));
-        String[] strSplit = str.split("#");
-        for (String tmp : strSplit) {
-            if (tmp.indexOf(',') != -1) {
-                str = str.replace("#" + tmp, "");
+        StringBuilder stringBuilder = new StringBuilder();
+        Object[]      onlineArray   = onlineList.getItems().toArray();
+        for (Object o : onlineArray) {
+            if (o.toString().indexOf(',') == - 1 && !o.toString().equals(userName.getText())) {
+                stringBuilder.append(o.toString()).append("#");
             }
         }
-        return str;
+        return stringBuilder.toString();
     }
 
     public
@@ -260,8 +258,6 @@ class ChatController implements Initializable {
         String          tmp        = getOnlineUser();
         String[] tmpSplit = tmp.split("#"); // User online
         String[] strSplit = selectedUser.split(","); // User already in group
-        System.out.println(tmp);
-        System.out.println(selectedUser);
         for (String temp : tmpSplit) {
             if (temp.indexOf(',') == -1) {
                 for (String str : strSplit) {

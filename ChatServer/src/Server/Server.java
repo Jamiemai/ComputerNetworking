@@ -36,6 +36,16 @@ class Server {
                     case "GROUP_ADD_CLIENT":
                         for (GroupHandler groupHandler : groupHandlerVector) {
                             if (groupHandler.groupName.equals(msgSplit[1])) {
+                                String newClient = msgSplit[2].replace(msgSplit[1] + ',', "");
+                                String[] clientSplit = newClient.split(",");
+                                for (ClientHandler clientHandler : clientHandlerVector) {
+                                    for (String tmp : clientSplit) {
+                                        if (clientHandler.name.equals(tmp)) {
+                                            clientHandler.AddGroup(msgSplit[2]);
+                                            break;
+                                        }
+                                    }
+                                }
                                 groupHandler.groupName = msgSplit[2];
                                 DBconnection.changeGroupName(groupHandler.groupName, msgSplit[1]);
                                 for (ClientHandler clientHandler : groupHandler.clientHandlerVector) {

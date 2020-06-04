@@ -57,7 +57,7 @@ class SignUpController implements Initializable {
         if (password.getText().equals(repassword.getText())) {
 
             Pattern pattern = Pattern.compile("[^A-Za-z0-9]");
-            Matcher match   = pattern.matcher(username.toString());
+            Matcher match   = pattern.matcher(username.getText());
             boolean val     = match.find();
             if (val) {
                 alert.setText("Username must not contain special characters");
