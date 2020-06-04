@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.*;
 
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,7 @@ class ChatController implements Initializable {
 
     private DataInputStream dis;
     private DataOutputStream dos;
+    private Object[] onlineArray;
 
 
     @Override
@@ -135,6 +137,16 @@ class ChatController implements Initializable {
                             if (selectedUser != null && selectedUser.equals(tmpSplit[1]))
                                 chatBox.getItems().add(tmpSplit[2]);
                             break;
+                        case "GROUP_NAME_CHANGE":
+                            String[] temp = msgSplit[1].split("#");
+                            Object[] onlineArray = onlineList.getItems().toArray();
+                            for (int i = 0; i < onlineArray.length; i++) {
+                                if (onlineArray[i].toString().equals(temp[2])) {
+                                    onlineList.getItems().set(i, temp[1]);
+                                    break;
+                                }
+                            }
+                            break;
                         default:
                             if (selectedUser != null && selectedUser.equals(msgSplit[0]))
                                 chatBox.getItems().add(msgSplit[1]);
@@ -202,6 +214,7 @@ class ChatController implements Initializable {
         FXMLLoader     loader     = new FXMLLoader(getClass().getResource("/FXML/Group.fxml"));
         Scene           scene      = new Scene(loader.load());
         GroupController controller = loader.getController();
+        controller.setAction("CREATE_GROUP");
         controller.setUsername(userName.getText());
         String tmp = getOnlineUser();
         if (tmp != null && !tmp.trim().isEmpty()) {
@@ -225,7 +238,7 @@ class ChatController implements Initializable {
         String[] strSplit = str.split("#");
         for (String tmp : strSplit) {
             if (tmp.indexOf(',') != -1) {
-                str = str.replace(tmp + "#", "");
+                str = str.replace("#" + tmp, "");
             }
         }
         return str;
@@ -243,14 +256,19 @@ class ChatController implements Initializable {
         Scene           scene      = new Scene(loader.load());
         GroupController controller = loader.getController();
         controller.setAction("ADD_CLIENT");
+        controller.setGroupName(selectedUser);
         String          tmp        = getOnlineUser();
         String[] tmpSplit = tmp.split("#"); // User online
         String[] strSplit = selectedUser.split(","); // User already in group
+        System.out.println(tmp);
+        System.out.println(selectedUser);
         for (String temp : tmpSplit) {
-            for (String str: strSplit) {
-                if (temp.equals(str)) {
-                    tmp = tmp.replace(temp + "#", "");
-                    break;
+            if (temp.indexOf(',') == -1) {
+                for (String str : strSplit) {
+                    if (temp.equals(str)) {
+                        tmp = tmp.replace(temp + "#", "");
+                        break;
+                    }
                 }
             }
         }
@@ -274,6 +292,7 @@ class ChatController implements Initializable {
         Scene           scene      = new Scene(loader.load());
         GroupController controller = loader.getController();
         controller.setAction("REMOVE_CLIENT");
+        controller.setGroupName(selectedUser);
         String[]        strSplit   = selectedUser.split(",");
         for (String user : strSplit) {
             CheckBox checkBox = new CheckBox();

@@ -50,7 +50,7 @@ class ClientHandler implements Runnable {
                         DBconnection.SaveChatData(tmpSplit[1], "null", tmpSplit[2]);
                         for (GroupHandler groupHandler : Server.groupHandlerVector) {
                             for (ClientHandler clientHandler : groupHandler.clientHandlerVector) {
-                                String[] tmpsplit = groupHandler.groupName.split(",");
+                                String[] tmpsplit = groupHandler.groupName.toString().split(",");
                                 for (String tmp : tmpsplit) {
                                     if (clientHandler.name.equals(tmp)) {
                                         clientHandler.dos.writeUTF("GROUP_CHAT#" + tmpSplit[0] + "#" + tmpSplit[1] + "#" + tmpSplit[2]);
@@ -129,5 +129,12 @@ class ClientHandler implements Runnable {
                 }
             }
         }
+    }
+
+
+
+    public
+    void changeGroupName(String newGroupName, String oldGroupName) throws IOException {
+        this.dos.writeUTF("GROUP_NAME_CHANGE#" + newGroupName + "#" + oldGroupName);
     }
 }

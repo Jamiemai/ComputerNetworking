@@ -15,7 +15,7 @@ class GroupController {
     final static int ServerPort = 1234;
 
     private String userName;
-
+    private String groupName;
     private String action;
 
     @FXML
@@ -24,6 +24,10 @@ class GroupController {
     public
     void setUsername(String username) {
         userName = username;
+    }
+    public
+    void setGroupName(String groupname) {
+        groupName = groupname;
     }
     public
     void setAction(String actionToDo) {
@@ -36,19 +40,22 @@ class GroupController {
         Socket           s   = new Socket(ip, ServerPort);
         DataOutputStream dos   = new DataOutputStream(s.getOutputStream());
         StringBuilder    group = new StringBuilder();
+
         switch (action) {
             case "ADD_CLIENT":
                 group.append("GROUP_ADD_CLIENT#");
-                group.append("GROUP_NAME#");
+                group.append(groupName + "#");
+                group.append(groupName);
                 break;
             case "REMOVE_CLIENT":
                 group.append("GROUP_REMOVE_CLIENT#");
-                group.append("GROUP_NAME#");
+                group.append(groupName + "#");
                 break;
-            default:
+            case "CREATE_GROUP":
                 group.append("GROUP_CREATE#");
-                group.append("GROUP_NAME#");
+                group.append("NULL#");
                 group.append(userName);
+                break;
         }
         for (CheckBox checkBox : groupMember.getItems()) {
             if (checkBox.isSelected()) {

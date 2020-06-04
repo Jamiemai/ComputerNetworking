@@ -111,12 +111,26 @@ class DBconnection {
         String            q1         = "SELECT * from chatHistory where toClient= ?";
         PreparedStatement pst        = connection.prepareStatement(q1);
         pst.setString(1, "null");
-        ResultSet rs = pst.executeQuery();
+        ResultSet     rs            = pst.executeQuery();
         StringBuilder stringBuilder = new StringBuilder();
         while (rs.next()) {
             stringBuilder.append(rs.getString("fromClient")).append("#");
         }
         connection.close();
         return stringBuilder.toString();
+    }
+
+    public static
+    void changeGroupName(String newGroupName, String oldGroupName) throws SQLException, ClassNotFoundException {
+        Connection connection = DBHandler.getConnection();
+
+        String q1 = "UPDATE chatHistory set fromClient=?  where fromClient= ?";
+        PreparedStatement pst = connection.prepareStatement(q1);
+        pst.setString(1,  newGroupName);
+        pst.setString(2, oldGroupName);
+
+        pst.executeUpdate();
+
+        connection.close();
     }
 }

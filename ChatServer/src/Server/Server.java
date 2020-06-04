@@ -34,7 +34,16 @@ class Server {
                         dos.writeUTF(DBconnection.SaveUserData(msgSplit[1], msgSplit[2]));
                         break;
                     case "GROUP_ADD_CLIENT":
-
+                        for (GroupHandler groupHandler : groupHandlerVector) {
+                            if (groupHandler.groupName.equals(msgSplit[1])) {
+                                groupHandler.groupName = msgSplit[2];
+                                DBconnection.changeGroupName(groupHandler.groupName, msgSplit[1]);
+                                for (ClientHandler clientHandler : groupHandler.clientHandlerVector) {
+                                    clientHandler.changeGroupName(groupHandler.groupName, msgSplit[1]);
+                                }
+                                break;
+                            }
+                        }
                         break;
                     case "GROUP_REMOVE_CLIENT":
 
@@ -52,7 +61,7 @@ class Server {
                             }
                         }
                         for (ClientHandler clientHandler : groupHandler.clientHandlerVector) {
-                            clientHandler.AddGroup(groupHandler.groupName);
+                            clientHandler.AddGroup(groupHandler.groupName.toString());
                         }
                         break;
                     case "NEW_CLIENT":
