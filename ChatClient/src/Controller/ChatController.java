@@ -2,6 +2,7 @@ package Controller;
 
 import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXTextField;
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,14 +12,14 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.*;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public
 class ChatController implements Initializable {
